@@ -30,7 +30,8 @@ public class Order {
     @Size(min=3)
     private Double totalPrice;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn
     @Size(min=1, message = "Must contain at least one Menu")
     private List<MenuOrder> orders;
 }
