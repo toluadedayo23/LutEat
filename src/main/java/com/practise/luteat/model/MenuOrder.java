@@ -27,4 +27,9 @@ public class MenuOrder {
     @NotNull
     @Size(min = 3)
     private Double price;
+
+    @NotEmpty
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Order_id", referencedColumnName = "id")
+    private Order order;
 }
