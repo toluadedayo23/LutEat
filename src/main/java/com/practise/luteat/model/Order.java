@@ -30,8 +30,11 @@ public class Order {
     @Size(min=3)
     private Double totalPrice;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn
-    @Size(min=1, message = "Must contain at least one Menu")
-    private List<MenuOrder> menuList;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
+    @Size(min = 1, message = "Must contain at least one Menu")
+    @JoinTable(name = "order_menuOrder", joinColumns =
+    @JoinColumn(name = "order_id", referencedColumnName = "id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "menuOrder_id", referencedColumnName = "id"))
+    private List<MenuOrder> orders;
 }
