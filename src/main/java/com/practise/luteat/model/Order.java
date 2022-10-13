@@ -33,5 +33,5 @@ public class Order {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn
     @Size(min=1, message = "Must contain at least one Menu")
-    private List<MenuOrder> orders;
+    private List<MenuOrder> menuList;
 }
