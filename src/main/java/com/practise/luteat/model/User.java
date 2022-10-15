@@ -1,5 +1,6 @@
 package com.practise.luteat.model;
 
+import com.practise.luteat.customValidator.Password;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,26 +15,29 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
 
     @Column(name = "first_name")
     @NotEmpty
     @Size(min = 2, max = 10)
-    private String firstName;
+    private String firstname;
 
     @Column(name = "last_name")
     @NotEmpty
     @Size(min = 2, max = 10)
-    private String lastName;
+    private String lastname;
 
     @NotEmpty
     @Size(min = 2, max = 10)
     private String username;
 
+    @NotEmpty(message = "password cannot be empty")
+    @Password
     private String password;
 
     @Email
@@ -41,7 +45,8 @@ public class User {
 
     @NotEmpty
     @Size(min = 11, max = 13)
-    private String phoneNumber;
+    @Column(name = "phonenumber")
+    private String phonenumber;
 
     @Column(name = "created_date")
     private Instant createdDate;

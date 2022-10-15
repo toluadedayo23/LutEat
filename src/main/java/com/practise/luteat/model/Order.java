@@ -14,27 +14,30 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "order")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long orderId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;
 
+    @Column(name = "created_date")
     private Instant createdDate;
 
     @NotNull
     @Size(min=3)
+    @Column(name = "total_price")
     private Double totalPrice;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Size(min = 1, message = "Must contain at least one Menu")
-    @JoinTable(name = "order_menuOrder", joinColumns =
-    @JoinColumn(name = "order_id", referencedColumnName = "id"),
-            inverseJoinColumns =
-            @JoinColumn(name = "menuOrder_id", referencedColumnName = "id"))
+//    @JoinTable(name = "order_menuorder", joinColumns =
+//    @JoinColumn(name = "order_id", referencedColumnName = "id"),
+//            inverseJoinColumns =
+//            @JoinColumn(name = "menuorder_id", referencedColumnName = "id"))
     private List<MenuOrder> orders;
 }

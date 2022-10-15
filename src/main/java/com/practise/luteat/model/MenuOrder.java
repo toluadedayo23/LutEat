@@ -18,7 +18,7 @@ public class MenuOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long menuOrderId;
 
     @NotEmpty(message = "name cannot be empty")
     @Size(min = 2, max = 10)
@@ -30,6 +30,6 @@ public class MenuOrder {
 
     @NotEmpty
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Order_id", referencedColumnName = "id")
+    @JoinColumn(name = "Order_id", referencedColumnName = "orderId")
     private Order order;
 }
