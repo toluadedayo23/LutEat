@@ -10,7 +10,7 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "email verification")
+@Table(name = "email_verification")
 public class UserEmailVerification {
 
     @Id

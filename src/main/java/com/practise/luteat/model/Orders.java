@@ -14,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "order")
-public class Order {
+@Table(name = "orders")
+public class Orders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +35,9 @@ public class Order {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Size(min = 1, message = "Must contain at least one Menu")
-//    @JoinTable(name = "order_menuorder", joinColumns =
-//    @JoinColumn(name = "order_id", referencedColumnName = "id"),
-//            inverseJoinColumns =
-//            @JoinColumn(name = "menuorder_id", referencedColumnName = "id"))
-    private List<MenuOrder> orders;
+    @JoinTable(name = "orders_menu_order", joinColumns =
+    @JoinColumn(name = "order_id", referencedColumnName = "orderId"),
+            inverseJoinColumns =
+            @JoinColumn(name = "menu_order_id", referencedColumnName = "menuOrderId"))
+    private List<MenuOrders> orders;
 }

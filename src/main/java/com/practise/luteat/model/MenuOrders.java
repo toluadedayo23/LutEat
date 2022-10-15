@@ -13,8 +13,8 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "menu_order ")
-public class MenuOrder {
+@Table(name = "menu_orders")
+public class MenuOrders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +31,5 @@ public class MenuOrder {
     @NotEmpty
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Order_id", referencedColumnName = "orderId")
-    private Order order;
+    private Orders order;
 }
