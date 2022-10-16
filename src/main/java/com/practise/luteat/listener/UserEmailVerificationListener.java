@@ -40,7 +40,8 @@ public class UserEmailVerificationListener implements ApplicationListener<UserRe
             messageHelper.setSubject("Please activate your LutEat account to use the app");
             messageHelper.setText(mailContentBuilder.build("Thank you for signing up on LutEat Application, " +
                     "please click on the below url to activate your account: " +
-                    "http://localhost:8099/api/auth/accountVerification/" + token));
+                    "http://localhost:" +
+                    "8099/api/auth/accountVerification/" + token));
         };
 
         try{
