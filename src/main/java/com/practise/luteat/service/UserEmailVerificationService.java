@@ -30,4 +30,7 @@ public class UserEmailVerificationService {
                 .orElseThrow(() -> new UserEmailVerificationException("Username does not exist"));
         return emailVerification.getToken();
     }
+
+
+
 }

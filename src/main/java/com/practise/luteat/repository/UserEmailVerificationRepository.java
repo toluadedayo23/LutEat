@@ -10,4 +10,6 @@ public interface UserEmailVerificationRepository extends JpaRepository<UserEmail
     boolean existsByUsername(String username);
 
     Optional<UserEmailVerification> findByUsername(String username);
+
+    void deleteByUsername(String username);
 }
