@@ -1,4 +1,4 @@
-package com.practise.luteat.service;
+package com.practise.luteat.service.impl;
 
 import com.practise.luteat.exceptions.UserEmailVerificationException;
 import com.practise.luteat.model.UserEmailVerification;

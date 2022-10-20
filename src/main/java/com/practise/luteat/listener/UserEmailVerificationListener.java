@@ -3,7 +3,7 @@ package com.practise.luteat.listener;
 import com.practise.luteat.event.UserRegistrationEvent;
 import com.practise.luteat.exceptions.UserNotificationEmailException;
 import com.practise.luteat.model.User;
-import com.practise.luteat.service.UserEmailVerificationService;
+import com.practise.luteat.service.impl.UserEmailVerificationService;
 import com.practise.luteat.utils.MailContentBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
