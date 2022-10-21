@@ -1,6 +1,6 @@
 package com.practise.luteat.service.impl;
 
-import com.practise.luteat.exceptions.UserEmailVerificationException;
+import com.practise.luteat.exceptions.EmailVerificationException;
 import com.practise.luteat.model.UserEmailVerification;
 import com.practise.luteat.repository.UserEmailVerificationRepository;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class UserEmailVerificationService {
 
     private  String getVerificationTokenByUsername(String username){
         UserEmailVerification emailVerification = userEmailVerificationRepository.findByUsername(username)
-                .orElseThrow(() -> new UserEmailVerificationException("Username does not exist"));
+                .orElseThrow(() -> new EmailVerificationException("Username does not exist"));
         return emailVerification.getToken();
     }
 

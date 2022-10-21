@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserEmailVerificationListener implements ApplicationListener<UserRegistrationEvent> {
+public class EmailSender implements ApplicationListener<UserRegistrationEvent> {
 
     private final JavaMailSender mailSender;
     private final MailContentBuilder mailContentBuilder;

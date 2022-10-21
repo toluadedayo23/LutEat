@@ -1,6 +1,6 @@
 package com.practise.luteat.service.impl;
 
-import com.practise.luteat.exceptions.UserNotificationEmailException;
+import com.practise.luteat.exceptions.EmailVerificationException;
 import com.practise.luteat.model.NotificationEmail;
 import com.practise.luteat.utils.MailContentBuilder;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ public class MailService {
     private final MailContentBuilder mailContentBuilder;
 
     @Async
-    public void sendMail(NotificationEmail notificationEmail){
+    public void sendMail(NotificationEmail notificationEmail) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("LutEat@gmail.com");
@@ -31,12 +31,12 @@ public class MailService {
         };
 
 
-        try{
+        try {
             mailSender.send(messagePreparator);
             log.info("Activation email sent");
-        }catch(MailException e){
+        } catch (MailException e) {
             log.error("Failure when sending Activation email to this email: {}", notificationEmail.getRecipient());
-            throw new UserNotificationEmailException("Exception occured when sending mail to " + notificationEmail.getRecipient());
+            throw new EmailVerificationException("Exception occured when sending mail to " + notificationEmail.getRecipient());
         }
     }
 }

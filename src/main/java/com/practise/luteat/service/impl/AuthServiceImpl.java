@@ -1,7 +1,7 @@
 package com.practise.luteat.service.impl;
 
 import com.practise.luteat.dto.RegisterRequest;
-import com.practise.luteat.exceptions.UserEmailVerificationException;
+import com.practise.luteat.exceptions.EmailVerificationException;
 import com.practise.luteat.exceptions.UsernameEmailExistsException;
 import com.practise.luteat.model.User;
 import com.practise.luteat.model.UserEmailVerification;
@@ -59,10 +59,10 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void verifyAccount(String token) {
         UserEmailVerification userEmailVerification = userEmailVerificationRepository.findById(token).orElseThrow(
-                () -> new UserEmailVerificationException("Invalid Token"));
+                () -> new EmailVerificationException("Invalid Token"));
         if (Instant.now().getEpochSecond() - userEmailVerification.getExpiryDate().getEpochSecond() > 300) {
             userEmailVerificationRepository.delete(userEmailVerification);
-            throw new UserEmailVerificationException("Verification Token Has expired, please request a new one");
+            throw new EmailVerificationException("Verification Token Has expired, please request a new one");
         }
         fetchAndEnableAccount(userEmailVerification.getUsername());
         userEmailVerificationRepository.delete(userEmailVerification);
@@ -72,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
             userEmailVerificationRepository.deleteByUsername(username);
-            throw new UserEmailVerificationException("Account Activation failed, User with the username: " + username
+            throw new EmailVerificationException("Account Activation failed, User with the username: " + username
                     + " does not exist");
         }
         if (userOptional.isPresent()) {
