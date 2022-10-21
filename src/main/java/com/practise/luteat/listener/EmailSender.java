@@ -1,7 +1,7 @@
 package com.practise.luteat.listener;
 
 import com.practise.luteat.event.UserRegistrationEvent;
-import com.practise.luteat.exceptions.UserNotificationEmailException;
+import com.practise.luteat.exceptions.EmailVerificationException;
 import com.practise.luteat.model.User;
 import com.practise.luteat.service.impl.UserEmailVerificationService;
 import com.practise.luteat.utils.MailContentBuilder;
@@ -32,7 +32,7 @@ public class UserEmailVerificationListener implements ApplicationListener<UserRe
     }
 
 
-    private void sendMail(String email, String token){
+    private void sendMail(String email, String token) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("LutEat@gmail.com");
@@ -44,12 +44,12 @@ public class UserEmailVerificationListener implements ApplicationListener<UserRe
                     "8099/api/auth/accountVerification/" + token));
         };
 
-        try{
+        try {
             mailSender.send(messagePreparator);
             log.info("Activation email sent");
-        }catch(MailException e){
+        } catch (MailException e) {
             log.error("Failure when sending Activation email to this email: {}", email);
-            throw new UserNotificationEmailException("Exception occurred when sending verifiation link to this email: " + email);
+            throw new EmailVerificationException("Exception occurred when sending verifiation link to this email: " + email);
         }
     }
 
