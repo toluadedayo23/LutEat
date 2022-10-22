@@ -1,9 +1,11 @@
 package com.practise.luteat.listener;
 
+import com.practise.luteat.dto.ResendVerificationDetailsDto;
 import com.practise.luteat.event.UserRegistrationEvent;
 import com.practise.luteat.exceptions.EmailVerificationException;
 import com.practise.luteat.model.User;
-import com.practise.luteat.service.impl.UserEmailVerificationService;
+import com.practise.luteat.repository.UserRepository;
+import com.practise.luteat.service.UserEmailVerificationService;
 import com.practise.luteat.utils.MailContentBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -22,6 +26,7 @@ public class EmailSender implements ApplicationListener<UserRegistrationEvent> {
     private final JavaMailSender mailSender;
     private final MailContentBuilder mailContentBuilder;
     private final UserEmailVerificationService userEmailVerificationService;
+    private final UserRepository userRepository;
 
     @Override
     public void onApplicationEvent(UserRegistrationEvent event) {
@@ -50,6 +55,18 @@ public class EmailSender implements ApplicationListener<UserRegistrationEvent> {
         } catch (MailException e) {
             log.error("Failure when sending Activation email to this email: {}", email);
             throw new EmailVerificationException("Exception occurred when sending verifiation link to this email: " + email);
+        }
+    }
+
+    public void resendVerificationLink(ResendVerificationDetailsDto resendVerificationDetailsDto) {
+        Optional<User> userOptional = userRepository.findByEmail(resendVerificationDetailsDto.getEmail());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user.getUsername() == resendVerificationDetailsDto.getUsername()) {
+                sendMail(user.getEmail(),
+                        userEmailVerificationService.generateVerificationTokenByUsername(user.getUsername())
+                );
+            }
         }
     }
 
