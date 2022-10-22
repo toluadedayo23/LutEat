@@ -16,6 +16,7 @@ public class UserEmailVerification {
     @Id
     @GeneratedValue(generator = "UUID_GENERATOR")
     @GenericGenerator(name = "UUID_GENERATOR", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "token", unique = true)
     private String token;
 
     private String username;
