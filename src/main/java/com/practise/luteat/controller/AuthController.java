@@ -4,14 +4,12 @@ import com.practise.luteat.dto.RegisterRequest;
 import com.practise.luteat.event.UserRegistrationEvent;
 import com.practise.luteat.model.User;
 import com.practise.luteat.service.AuthService;
+import com.practise.luteat.service.UserEmailVerificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -21,6 +19,7 @@ import javax.validation.Valid;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserEmailVerificationService userEmailVerificationService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @PostMapping("/signup")
@@ -29,4 +28,11 @@ public class AuthController {
         applicationEventPublisher.publishEvent(new UserRegistrationEvent(user));
         return ResponseEntity.status(HttpStatus.OK).body("User Registration Successful");
     }
+
+    @GetMapping("/accountVerification/{token}")
+    public ResponseEntity<String> verifyAccount(@PathVariable("token") String token){
+        userEmailVerificationService.verifyAccount(token);
+        return ResponseEntity.status(HttpStatus.OK).body("Account Verification Successful");
+    }
+
 }
