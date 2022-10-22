@@ -2,6 +2,7 @@ package com.practise.luteat.exceptions.handler;
 
 import com.practise.luteat.exceptions.EmailVerificationException;
 import com.practise.luteat.exceptions.ErrorResponse;
+import com.practise.luteat.exceptions.RefreshTokenException;
 import com.practise.luteat.exceptions.UsernameEmailExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -73,9 +74,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String errorMessage = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
         List<String> validationList = ex.getBindingResult().getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).collect(Collectors.toList());
-        log.info("Validation error: " + validationList);
+        log.error("Validation error: " + validationList);
         return new ResponseEntity<>(new ErrorResponse(status, errorMessage), status);
     }
+
+    @ExceptionHandler(RefreshTokenException.class)
+    public ResponseEntity<ErrorResponse> handleRefreshTokenException(Exception e){
+        RefreshTokenException refreshTokenException = (RefreshTokenException) e;
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        log.error("Invalid Refresh Token");
+        return new ResponseEntity<>(new ErrorResponse(status, e.getMessage()), status);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
