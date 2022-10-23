@@ -7,6 +7,7 @@ public interface AuthService {
      User singUp(RegisterRequest registerRequest);
      AuthenticationResponse login(LoginRequest loginRequest);
      AuthenticationResponse refreshToken(RefreshTokenRequest refreshToken);
+     User getCurrentUser();
 
      boolean isLoggedIn();
 //     void verifyAccount(String token);
