@@ -3,6 +3,7 @@ package com.practise.luteat.service.impl;
 import com.practise.luteat.model.User;
 import com.practise.luteat.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,10 +20,16 @@ import java.util.Collections;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final LoginAttemptService loginAttemptService;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        if(loginAttemptService.isBlocked(username)){
+            throw new LockedException("User account is locked, please try to login again after 24 hours");
+        }
+
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException("No User " +
                         "Found with the Username: " + username)
