@@ -3,7 +3,7 @@ package com.practise.luteat.service.impl;
 import com.practise.luteat.dto.AuthenticationResponse;
 import com.practise.luteat.dto.LoginRequest;
 import com.practise.luteat.dto.RefreshTokenRequest;
-import com.practise.luteat.dto.RegisterRequest;
+import com.practise.luteat.dto.signupRequest;
 import com.practise.luteat.exceptions.UsernameEmailExistsException;
 import com.practise.luteat.listener.EmailSender;
 import com.practise.luteat.model.User;
@@ -40,21 +40,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public User singUp(RegisterRequest registerRequest) {
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new UsernameEmailExistsException("Username: " + registerRequest.getUsername() + " already exists, please choose a new one");
+    public User singUp(signupRequest signupRequest) {
+        if (userRepository.existsByUsername(signupRequest.getUsername())) {
+            throw new UsernameEmailExistsException("Username: " + signupRequest.getUsername() + " already exists, please choose a new one");
         }
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new UsernameEmailExistsException("Email: " + registerRequest.getEmail() + " already exists, please choose a new one");
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            throw new UsernameEmailExistsException("Email: " + signupRequest.getEmail() + " already exists, please choose a new one");
         }
 
         User user = new User();
-        user.setFirstname(registerRequest.getFirstname());
-        user.setLastname(registerRequest.getLastname());
-        user.setUsername(registerRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setEmail(registerRequest.getEmail());
-        user.setPhonenumber(registerRequest.getPhonenumber());
+        user.setFirstname(signupRequest.getFirstname());
+        user.setLastname(signupRequest.getLastname());
+        user.setUsername(signupRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        user.setEmail(signupRequest.getEmail());
+        user.setPhonenumber(signupRequest.getPhonenumber());
         user.setCreatedDate(Instant.now());
         user.setEnabled(false);
 
@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthenticationResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
@@ -79,6 +79,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         refreshTokenService.validateRefreshToken(refreshTokenRequest);
         refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
@@ -100,35 +101,6 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
-
-//    @Override
-//    @Transactional
-//    public void verifyAccount(String token) {
-//        UserEmailVerification userEmailVerification = userEmailVerificationRepository.findById(token).orElseThrow(
-//                () -> new EmailVerificationException("Invalid Token"));
-//        if (Instant.now().getEpochSecond() - userEmailVerification.getExpiryDate().getEpochSecond() > 300) {
-//            userEmailVerificationRepository.delete(userEmailVerification);
-//            throw new EmailVerificationException("Verification Token Has expired, please request a new one");
-//        }
-//        fetchAndEnableAccount(userEmailVerification.getUsername());
-//        userEmailVerificationRepository.delete(userEmailVerification);
-//    }
-//
-//    private void fetchAndEnableAccount(String username) {
-//        Optional<User> userOptional = userRepository.findByUsername(username);
-//        if (userOptional.isEmpty()) {
-//            userEmailVerificationRepository.deleteByUsername(username);
-//            throw new EmailVerificationException("Account Activation failed, User with the username: " + username
-//                    + " does not exist");
-//        }
-//        if (userOptional.isPresent()) {
-//            User user = userOptional.get();
-//            user.setEnabled(true);
-//            userRepository.save(user);
-//        }
-//
-//    }
-
     @Override
     public boolean isLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -136,17 +108,4 @@ public class AuthServiceImpl implements AuthService {
                 authentication.isAuthenticated();
     }
 
-
-//    @Override
-//    public void resendVerificationLink(ResendVerificationDetailsDto resendVerificationDetailsDto) {
-//        Optional<User> userOptional = userRepository.findByEmail(resendVerificationDetailsDto.getEmail());
-//        if(userOptional.isPresent()){
-//            User user = userOptional.get();
-//            if(user.getUsername() == resendVerificationDetailsDto.getUsername()){
-//                emailSender.sendMail(user.getEmail(),
-//                        userEmailVerificationService.generateVerificationTokenByUsername(user.getUsername())
-//                );
-//            }
-//        }
-//    }
 }

@@ -38,7 +38,7 @@ public class UserEmailVerificationServiceImpl implements UserEmailVerificationSe
         return emailVerification.getToken();
     }
 
-    @Transactional
+
     public void verifyAccount(String token) {
         UserEmailVerification userEmailVerification = userEmailVerificationRepository.findById(token).orElseThrow(
                 () -> new EmailVerificationException("Invalid Token"));

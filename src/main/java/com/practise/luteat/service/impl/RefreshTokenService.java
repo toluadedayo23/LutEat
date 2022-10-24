@@ -29,7 +29,12 @@ public class RefreshTokenService {
 
     @Transactional
     public void deleteRefreshToken(String token){
-        refreshTokenRepository.deleteById(token);
+        if(refreshTokenRepository.existsById(token)){
+            refreshTokenRepository.deleteById(token);
+        }else{
+            throw new RefreshTokenException("Invalid Token, unable to delete");
+        }
+
     }
 
 
