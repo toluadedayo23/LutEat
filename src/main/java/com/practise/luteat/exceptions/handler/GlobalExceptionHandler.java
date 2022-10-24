@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -84,6 +85,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.NOT_FOUND;
         log.error("Invalid Refresh Token");
         return new ResponseEntity<>(new ErrorResponse(status, refreshTokenException.getMessage()), status);
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ErrorResponse> handleLockedException(LockedException e){
+        HttpStatus status = HttpStatus.LOCKED;
+        log.error("User account has been locked for 24 hours");
+        return new ResponseEntity<>(new ErrorResponse(status, e.getMessage()), status);
     }
 
 
