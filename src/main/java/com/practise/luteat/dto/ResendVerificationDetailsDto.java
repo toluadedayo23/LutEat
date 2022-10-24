@@ -4,16 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
 public class ResendVerificationDetailsDto {
 
-    @NotEmpty(message = "username cannot be empty")
+    @NotBlank(message = "username cannot be empty")
     private String username;
 
-    @Email
-    @NotEmpty(message = "Email cannot be empty")
+
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Please provide a valid email")
     private String email;
 }

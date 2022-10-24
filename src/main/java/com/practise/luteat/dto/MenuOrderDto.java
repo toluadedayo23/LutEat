@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,11 +14,11 @@ import javax.validation.constraints.Size;
 public class MenuOrderDto {
     private Long id;
 
-    @NotEmpty(message = "name cannot be empty")
-    @Size(min = 2, max = 10)
+    @NotBlank(message = "name cannot be empty")
+    @Size(min = 2, max = 10, message = "name must be between 2 and 10 characters")
     private String name;
 
-    @NotNull(message = "price cannot be null")
-    @Size(min = 3)
+    @NotBlank(message = "price cannot be null")
+    @Size(min = 3, message = "price must be at least 3 figures")
     private Double price;
 }

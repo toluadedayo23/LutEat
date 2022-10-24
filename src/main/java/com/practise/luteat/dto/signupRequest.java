@@ -1,34 +1,39 @@
 package com.practise.luteat.dto;
 
 import com.practise.luteat.customValidator.Password;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+
 @Data
-public class RegisterRequest {
+@AllArgsConstructor
+@NoArgsConstructor
+public class signupRequest {
 
-    @NotEmpty
-    @Size(min = 2, max = 10)
+    @NotBlank(message = "firstname must not be empty")
+    @Size(min = 2, max = 15, message = "firstname must be between 2 and 15 characters")
     private String firstname;
 
-    @NotEmpty
-    @Size(min = 2, max = 10)
+    @NotBlank(message = "lastname must not be empty")
+    @Size(min = 2, max = 15,message = "lastname must be between 2 and 15 characters" )
     private String lastname;
 
-    @NotEmpty
-    @Size(min = 2, max = 10)
+    @NotBlank(message = "username must not be empty")
+    @Size(min = 2, max = 15, message = "username must be between 2 and 15 characters")
     private String username;
 
-    @Email
+    @NotBlank(message = "Email is compulsory, please provide a valid one")
+    @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",
+    message = "please provide a valid email")
     private String email;
 
-    @NotEmpty
-    @Size(min = 11, max = 13)
+    @NotBlank(message = "phonenumber must not be empty")
+    @Size(min = 11, max = 13, message = "email must be between 2 and 10 characters")
     private String phonenumber;
 
-    @NotEmpty(message = "password cannot be empty")
+    @NotBlank(message = "password cannot be empty")
     @Password
     private String password;
 
