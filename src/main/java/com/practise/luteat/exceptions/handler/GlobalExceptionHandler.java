@@ -31,7 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         log.error("EmailVerification Exception Error");
 
-        return new ResponseEntity<>(new ErrorResponse(status, e.getMessage()), status);
+        return new ResponseEntity<>(new ErrorResponse(status, userEmailVerificationException.getMessage()), status);
 
     }
 
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         log.error("Username or Email already exists");
 
-        return new ResponseEntity<>(new ErrorResponse(status, e.getMessage()), status);
+        return new ResponseEntity<>(new ErrorResponse(status, usernameEmailExistsException.getMessage()), status);
 
     }
 
@@ -83,7 +83,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         RefreshTokenException refreshTokenException = (RefreshTokenException) e;
         HttpStatus status = HttpStatus.NOT_FOUND;
         log.error("Invalid Refresh Token");
-        return new ResponseEntity<>(new ErrorResponse(status, e.getMessage()), status);
+        return new ResponseEntity<>(new ErrorResponse(status, refreshTokenException.getMessage()), status);
     }
 
 
