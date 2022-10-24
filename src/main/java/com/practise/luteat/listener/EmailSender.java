@@ -3,6 +3,7 @@ package com.practise.luteat.listener;
 import com.practise.luteat.dto.ResendVerificationDetailsDto;
 import com.practise.luteat.event.UserRegistrationEvent;
 import com.practise.luteat.exceptions.EmailVerificationException;
+import com.practise.luteat.exceptions.UsernameEmailExistsException;
 import com.practise.luteat.model.User;
 import com.practise.luteat.repository.UserRepository;
 import com.practise.luteat.service.UserEmailVerificationService;
@@ -15,8 +16,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -42,7 +41,7 @@ public class EmailSender implements ApplicationListener<UserRegistrationEvent> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("LutEat@gmail.com");
             messageHelper.setTo(email);
-            messageHelper.setSubject("Please activate your LutEat account to use the app");
+            messageHelper.setSubject("LutEat");
             messageHelper.setText(mailContentBuilder.build("Thank you for signing up on LutEat Application, " +
                     "please click on the below url to activate your account: " +
                     "http://localhost:" +
@@ -54,19 +53,17 @@ public class EmailSender implements ApplicationListener<UserRegistrationEvent> {
             log.info("Activation email sent");
         } catch (MailException e) {
             log.error("Failure when sending Activation email to this email: {}", email);
-            throw new EmailVerificationException("Exception occurred when sending verifiation link to this email: " + email);
+            throw new EmailVerificationException("Failure occurred when sending verification link to this email: " + email);
         }
     }
 
-    public void resendVerificationLink(ResendVerificationDetailsDto resendVerificationDetailsDto) {
-        Optional<User> userOptional = userRepository.findByEmail(resendVerificationDetailsDto.getEmail());
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (user.getUsername() == resendVerificationDetailsDto.getUsername()) {
-                sendMail(user.getEmail(),
-                        userEmailVerificationService.generateVerificationTokenByUsername(user.getUsername())
-                );
-            }
+    public User resendVerificationLink(ResendVerificationDetailsDto resendVerificationDetailsDto) {
+        if(userRepository.existsByUsername(resendVerificationDetailsDto.getUsername())
+        && userRepository.existsByEmail(resendVerificationDetailsDto.getEmail())){
+            return userRepository.findByEmail(resendVerificationDetailsDto.getEmail())
+                    .orElseThrow(() -> new UsernameEmailExistsException("Username or Email do not exist"));
+        }else{
+            throw new UsernameEmailExistsException("Username or Email do not exist");
         }
     }
 
