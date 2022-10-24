@@ -37,10 +37,9 @@ public class User {
     private String username;
 
     @NotEmpty(message = "password cannot be empty")
-    @Password
     private String password;
 
-    @Email
+    @Email(message = "please provide a valid email")
     private String email;
 
     @NotEmpty
