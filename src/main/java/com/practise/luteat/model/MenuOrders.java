@@ -28,8 +28,8 @@ public class MenuOrders {
     @Size(min = 3)
     private Double price;
 
-    @NotEmpty
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Order_id", referencedColumnName = "orderId")
-    private Orders order;
+//    @NotEmpty
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "Order_id", referencedColumnName = "orderId")
+//    private Orders order;
 }
