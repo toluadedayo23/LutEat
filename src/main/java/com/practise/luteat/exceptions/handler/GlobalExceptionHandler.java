@@ -1,9 +1,6 @@
 package com.practise.luteat.exceptions.handler;
 
-import com.practise.luteat.exceptions.EmailVerificationException;
-import com.practise.luteat.exceptions.ErrorResponse;
-import com.practise.luteat.exceptions.RefreshTokenException;
-import com.practise.luteat.exceptions.UsernameEmailExistsException;
+import com.practise.luteat.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -92,6 +89,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.LOCKED;
         log.error("User account has been locked for 24 hours");
         return new ResponseEntity<>(new ErrorResponse(status, e.getMessage()), status);
+    }
+
+    @ExceptionHandler(MenuOrderException.class)
+    public ResponseEntity<ErrorResponse> handleMenuOrderException(Exception e){
+        MenuOrderException menuOrderException = (MenuOrderException) e;
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        log.error("Menu Not Found");
+        return ResponseEntity.status(status).body(new ErrorResponse(status, menuOrderException.getMessage()));
     }
 
 
