@@ -29,7 +29,7 @@ public class Orders {
     private Instant createdDate;
 
     @NotNull
-    @Size(min=3)
+    @Size(min = 3)
     @Column(name = "total_price")
     private Double totalPrice;
 
