@@ -14,8 +14,8 @@ import javax.validation.constraints.Size;
 public class MenuOrderDto {
     private Long id;
 
-    @NotBlank(message = "name cannot be empty")
-    @Size(min = 2, max = 10, message = "name must be between 2 and 10 characters")
+    @NotBlank(message = "username must not be empty")
+    @Size(min = 2, max = 15, message = "name must be between 2 and 15 characters")
     private String name;
 
     @NotBlank(message = "price cannot be null")

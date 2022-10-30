@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-public class OrderByDateResponse {
+public class OrderResponse {
     private String menuName;
     private Double menuPrice;
     private Date dateCreated;

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class OrdersResponse {
+public class CreateOrderResponse {
     private String username;
     private Double totalPrice;
     private Instant orderDate;
