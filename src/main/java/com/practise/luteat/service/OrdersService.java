@@ -1,14 +1,13 @@
 package com.practise.luteat.service;
 
-import com.practise.luteat.dto.OrderDto;
-import com.practise.luteat.dto.OrdersResponse;
+import com.practise.luteat.dto.*;
 
-import java.util.Date;
+import java.util.List;
 
 public interface OrdersService {
-    OrdersResponse createOrder(OrderDto orderDto);
+    CreateOrderResponse createOrder(createOrderDto orderDto);
 
-    void getOrderByDate(String username, Date startDate, Date finishDate);
+    List<OrderResponse> getOrderByDate(OrderBYDateDto orderBYDateDto);
 
-    void getAllOrdersByUsername(String username);
+    List<OrderResponse> getRecentOrdersByUsername(OrdersByUsernameDto ordersByUsernameDto);
 }

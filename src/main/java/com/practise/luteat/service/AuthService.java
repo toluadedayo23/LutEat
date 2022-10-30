@@ -4,7 +4,7 @@ import com.practise.luteat.dto.*;
 import com.practise.luteat.model.User;
 
 public interface AuthService {
-     User singUp(signupRequest registerRequest);
+     void singUp(signupRequest registerRequest);
      AuthenticationResponse login(LoginRequest loginRequest);
      AuthenticationResponse refreshToken(RefreshTokenRequest refreshToken);
      User getCurrentUser();
