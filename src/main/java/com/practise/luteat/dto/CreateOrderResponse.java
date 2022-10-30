@@ -12,5 +12,5 @@ public class OrdersResponse {
     private String username;
     private Double totalPrice;
     private Instant orderDate;
-    private List<String> order;
+    private List<MenuOrderDto> order;
 }
