@@ -1,4 +1,4 @@
-package com.practise.luteat.event;
+package com.practise.luteat.listener;
 
 import com.practise.luteat.service.impl.LoginAttemptService;
 import lombok.AllArgsConstructor;
