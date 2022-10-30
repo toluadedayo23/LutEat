@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class createOrderDto {
+public class CreateOrderDto {
 
     @NotBlank(message = "Username cannot be empty")
     @Size(min = 2, max = 10, message = "username must be between 2 and 10 characters")
