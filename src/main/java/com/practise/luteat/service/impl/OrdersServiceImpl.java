@@ -1,22 +1,25 @@
 package com.practise.luteat.service.impl;
 
-import com.practise.luteat.dto.OrderDto;
-import com.practise.luteat.dto.OrdersResponse;
+import com.practise.luteat.dto.*;
+import com.practise.luteat.mapper.MenuOrdersMapper;
 import com.practise.luteat.mapper.OrdersMapper;
 import com.practise.luteat.model.MenuOrders;
 import com.practise.luteat.model.Orders;
+import com.practise.luteat.model.User;
 import com.practise.luteat.repository.OrderRepository;
 import com.practise.luteat.repository.UserRepository;
 import com.practise.luteat.service.OrdersService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Tuple;
+import java.sql.Date;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,9 +28,11 @@ public class OrdersServiceImpl implements OrdersService {
     private final UserRepository userRepository;
     private final OrdersMapper ordersMapper;
     private final OrderRepository orderRepository;
+    private final MenuOrdersMapper menuOrdersMapper;
 
+    @Transactional
     @Override
-    public OrdersResponse createOrder(OrderDto orderDto) {
+    public CreateOrderResponse createOrder(createOrderDto orderDto) {
         userRepository.findByUsername(orderDto.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User with the username: " + orderDto.getUsername() + " not found")
@@ -37,25 +42,51 @@ public class OrdersServiceImpl implements OrdersService {
         Double totalPrice = getTotalOrderPrice(orders);
         orders.setTotalPrice(totalPrice);
         orderRepository.save(orders);
-        return OrdersResponse.builder()
+        return CreateOrderResponse.builder()
                 .username(orders.getUser().getUsername())
                 .totalPrice(orders.getTotalPrice())
                 .orderDate(Instant.now())
-                .order(fillOrderResponseMap(orders.getOrders()))
+                .order(menuOrderDtoList(orders.getOrders()))
                 .build();
 
     }
 
     @Override
-    public void getOrderByDate(String username, Date startDate, Date finishDate) {
-
+    public List<OrderResponse> getOrderByDate(OrderBYDateDto orderBYDateDto) {
+        User user = userRepository.findByUsername(orderBYDateDto.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "User with the username: " + orderBYDateDto.getUsername() + " not found"
+                ));
+        Date startDateRepo = Date.valueOf(orderBYDateDto.getFirstDate());
+        Date finalDateRepo = Date.valueOf(orderBYDateDto.getSecondDate());
+        List<Tuple> tupleList = orderRepository.getOrdersByDateRange(user.getUserId(), startDateRepo, finalDateRepo);
+        List<OrderResponse> orderByDateResponseList = tupleList.stream()
+                .map(tuples -> new OrderResponse(
+                        tuples.get(0, String.class),
+                        tuples.get(1, Double.class),
+                        tuples.get(2, java.util.Date.class)))
+                .collect(Collectors.toList());
+        return orderByDateResponseList;
     }
 
     @Override
-    public void getAllOrdersByUsername(String username) {
+    public List<OrderResponse>  getRecentOrdersByUsername(OrdersByUsernameDto ordersByUsernameDto) {
+        User user = userRepository.findByUsername(ordersByUsernameDto.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "User with the username: " + ordersByUsernameDto.getUsername() + " not found"
+                ));
+        List<Tuple> tupleList = orderRepository.getRecentOrdersByUsername(user.getUserId());
 
+        List<OrderResponse> orderByUsernameResponse = tupleList.stream()
+                .map(tuple -> new OrderResponse(
+                    tuple.get(0, String.class),
+                    tuple.get(1, Double.class),
+                    tuple.get(2, java.util.Date.class)))
+                .collect(Collectors.toList());
+
+        return orderByUsernameResponse;
     }
-    
+
 
     private Double getTotalOrderPrice(Orders orders) {
         Double totalPrice = 0.0;
@@ -67,11 +98,9 @@ public class OrdersServiceImpl implements OrdersService {
 
     }
 
-    private List<String> fillOrderResponseMap(List<MenuOrders> orders) {
-        List<String> orderList = new ArrayList<>();
-        for (MenuOrders order : orders) {
-            orderList.add(order.getName() + ": " + order.getPrice());
-        }
-        return orderList;
+    private List<MenuOrderDto> menuOrderDtoList(List<MenuOrders> orders) {
+        return orders.stream()
+                .map(menuOrdersMapper::mapMenuToDto)
+                .collect(Collectors.toList());
     }
 }

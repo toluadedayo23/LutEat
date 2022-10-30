@@ -1,12 +1,16 @@
 package com.practise.luteat.service.impl;
 
+import com.practise.luteat.dto.ResendVerificationDetailsDto;
+import com.practise.luteat.event.UserRegistrationEvent;
 import com.practise.luteat.exceptions.EmailVerificationException;
+import com.practise.luteat.exceptions.UsernameEmailExistsException;
 import com.practise.luteat.model.User;
 import com.practise.luteat.model.UserEmailVerification;
 import com.practise.luteat.repository.UserEmailVerificationRepository;
 import com.practise.luteat.repository.UserRepository;
 import com.practise.luteat.service.UserEmailVerificationService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +23,7 @@ public class UserEmailVerificationServiceImpl implements UserEmailVerificationSe
 
     private final UserEmailVerificationRepository userEmailVerificationRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public String generateVerificationTokenByUsername(String username){
@@ -48,6 +53,18 @@ public class UserEmailVerificationServiceImpl implements UserEmailVerificationSe
         }
         fetchAndEnableAccount(userEmailVerification.getUsername());
         userEmailVerificationRepository.delete(userEmailVerification);
+    }
+
+    public void resendVerificationLink(ResendVerificationDetailsDto resendVerificationDetailsDto) {
+        User user = userRepository.findByEmail(resendVerificationDetailsDto.getEmail()).orElseThrow(
+                () ->  new UsernameEmailExistsException("Username or Email do not exist, please signup or input the correct ones")
+        );
+        if(!user.getEnabled() == true){
+            applicationEventPublisher.publishEvent(new UserRegistrationEvent(user));
+        }else{
+            throw new UsernameEmailExistsException("User with the username: " + resendVerificationDetailsDto.getUsername().toUpperCase()
+            + " account already verified; can't resend verification email again");
+        }
     }
 
     private void fetchAndEnableAccount(String username) {

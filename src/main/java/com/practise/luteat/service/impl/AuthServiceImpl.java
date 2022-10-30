@@ -4,6 +4,7 @@ import com.practise.luteat.dto.AuthenticationResponse;
 import com.practise.luteat.dto.LoginRequest;
 import com.practise.luteat.dto.RefreshTokenRequest;
 import com.practise.luteat.dto.signupRequest;
+import com.practise.luteat.event.UserRegistrationEvent;
 import com.practise.luteat.exceptions.UsernameEmailExistsException;
 import com.practise.luteat.listener.EmailSender;
 import com.practise.luteat.model.User;
@@ -12,6 +13,7 @@ import com.practise.luteat.repository.UserRepository;
 import com.practise.luteat.security.JwtProvider;
 import com.practise.luteat.service.AuthService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,16 +33,14 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final RefreshTokenService refreshTokenService;
-    private final UserEmailVerificationRepository userEmailVerificationRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailSender emailSender;
-    private final UserEmailVerificationServiceImpl userEmailVerificationService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     @Transactional
-    public User singUp(signupRequest signupRequest) {
+    public void singUp(signupRequest signupRequest) {
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
             throw new UsernameEmailExistsException("Username: " + signupRequest.getUsername() + " already exists, please choose a new one");
         }
@@ -48,17 +48,18 @@ public class AuthServiceImpl implements AuthService {
             throw new UsernameEmailExistsException("Email: " + signupRequest.getEmail() + " already exists, please choose a new one");
         }
 
-        User user = new User();
-        user.setFirstname(signupRequest.getFirstname());
-        user.setLastname(signupRequest.getLastname());
-        user.setUsername(signupRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        user.setEmail(signupRequest.getEmail());
-        user.setPhonenumber(signupRequest.getPhonenumber());
-        user.setCreatedDate(Instant.now());
-        user.setEnabled(false);
+        User userObject = new User();
+        userObject.setFirstname(signupRequest.getFirstname());
+        userObject.setLastname(signupRequest.getLastname());
+        userObject.setUsername(signupRequest.getUsername());
+        userObject.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        userObject.setEmail(signupRequest.getEmail());
+        userObject.setPhonenumber(signupRequest.getPhonenumber());
+        userObject.setCreatedDate(Instant.now());
+        userObject.setEnabled(false);
 
-        return userRepository.save(user);
+        applicationEventPublisher.publishEvent(new UserRegistrationEvent(userObject));
+        userRepository.save(userObject);
     }
 
 
@@ -95,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User getCurrentUser() {
         Jwt currenUser = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByUsername(currenUser.getSubject()).orElseThrow( () ->
+        return userRepository.findByUsername(currenUser.getSubject()).orElseThrow(() ->
                 new UsernameNotFoundException("User with the username: " +
                         "" + currenUser.getSubject().toUpperCase() + " not found")
         );
