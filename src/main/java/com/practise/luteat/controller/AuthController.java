@@ -1,14 +1,10 @@
 package com.practise.luteat.controller;
 
 import com.practise.luteat.dto.*;
-import com.practise.luteat.event.UserRegistrationEvent;
-import com.practise.luteat.listener.EmailSender;
-import com.practise.luteat.model.User;
 import com.practise.luteat.service.AuthService;
 import com.practise.luteat.service.UserEmailVerificationService;
 import com.practise.luteat.service.impl.RefreshTokenService;
 import lombok.AllArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +19,11 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserEmailVerificationService userEmailVerificationService;
-    private final ApplicationEventPublisher applicationEventPublisher;
-    private final EmailSender emailSender;
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody signupRequest signupRequest) {
-        User user = authService.singUp(signupRequest);
-        applicationEventPublisher.publishEvent(new UserRegistrationEvent(user));
+        authService.singUp(signupRequest);
         return ResponseEntity.status(OK).body("User Registration Successful");
     }
 
@@ -42,8 +35,7 @@ public class AuthController {
 
     @PostMapping("/resendVerificationEmail")
     public ResponseEntity<String> resendVerificationEmail(@Valid @RequestBody ResendVerificationDetailsDto resendVerificationDetailsDto) {
-        User user = emailSender.resendVerificationLink(resendVerificationDetailsDto);
-        applicationEventPublisher.publishEvent(new UserRegistrationEvent(user));
+        userEmailVerificationService.resendVerificationLink(resendVerificationDetailsDto);
         return ResponseEntity.status(OK).body("Verification Email has been resent");
     }
 
