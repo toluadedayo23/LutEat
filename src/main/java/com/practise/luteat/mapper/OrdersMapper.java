@@ -1,6 +1,6 @@
 package com.practise.luteat.mapper;
 
-import com.practise.luteat.dto.OrderDto;
+import com.practise.luteat.dto.createOrderDto;
 import com.practise.luteat.model.Orders;
 import com.practise.luteat.model.User;
 import com.practise.luteat.repository.UserRepository;
@@ -18,13 +18,13 @@ public abstract class OrdersMapper {
 
     @Mapping(target = "username", expression = "java(order.getUser().getUsername())")
     @Mapping(target = "menuList", source = "orders")
-    public abstract OrderDto mapOrdersToDto(Orders order);
+    public abstract createOrderDto mapOrdersToDto(Orders order);
 
     @Mapping(target = "orderId", ignore = true)
     @Mapping(target = "user", expression = "java(findUser(orderDto.getUsername()))")
     @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
     @Mapping(target = "orders", source = "menuList")
-    public abstract Orders map(OrderDto orderDto);
+    public abstract Orders map(createOrderDto orderDto);
 
     User findUser(String username) {
         return userRepository.findByUsername(username).orElseThrow(
