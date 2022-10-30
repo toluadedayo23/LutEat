@@ -32,7 +32,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Transactional
     @Override
-    public CreateOrderResponse createOrder(createOrderDto orderDto) {
+    public CreateOrderResponse createOrder(CreateOrderDto orderDto) {
         userRepository.findByUsername(orderDto.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User with the username: " + orderDto.getUsername() + " not found")
@@ -70,18 +70,18 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public List<OrderResponse>  getRecentOrdersByUsername(OrdersByUsernameDto ordersByUsernameDto) {
-        User user = userRepository.findByUsername(ordersByUsernameDto.getUsername())
+    public List<OrderResponse> getRecentOrdersByUsername(String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "User with the username: " + ordersByUsernameDto.getUsername() + " not found"
+                        "User with the username: " + username + " not found"
                 ));
         List<Tuple> tupleList = orderRepository.getRecentOrdersByUsername(user.getUserId());
 
         List<OrderResponse> orderByUsernameResponse = tupleList.stream()
                 .map(tuple -> new OrderResponse(
-                    tuple.get(0, String.class),
-                    tuple.get(1, Double.class),
-                    tuple.get(2, java.util.Date.class)))
+                        tuple.get(0, String.class),
+                        tuple.get(1, Double.class),
+                        tuple.get(2, java.util.Date.class)))
                 .collect(Collectors.toList());
 
         return orderByUsernameResponse;

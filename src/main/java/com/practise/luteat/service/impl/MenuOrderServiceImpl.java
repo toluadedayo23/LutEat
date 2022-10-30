@@ -30,7 +30,7 @@ public class MenuOrderServiceImpl implements MenuOrderService {
 
     @Transactional
     @Override
-    public MenuOrderDto UpdateMenu(MenuOrderDto menuOrderDto) {
+    public MenuOrderDto updateMenu(MenuOrderDto menuOrderDto) {
         MenuOrders menuOrders= menuOrderRepository.findByName(menuOrderDto.getName())
                 .orElseThrow(() -> new MenuOrderException("Menu doesn't exist, please find the right name and try again"));
         menuOrders.setName(menuOrderDto.getName());
@@ -42,12 +42,13 @@ public class MenuOrderServiceImpl implements MenuOrderService {
 
     @Transactional
     @Override
-    public void DeleteMenu(MenuOrderDto menuOrderDto) {
+    public void deleteMenu(MenuOrderDto menuOrderDto) {
         MenuOrders menuOrders = menuOrderRepository.findByName(menuOrderDto.getName())
                 .orElseThrow(() -> new MenuOrderException("Menu doesn't exist, please find the right name and try again"));
         menuOrderRepository.delete(menuOrders);
     }
 
+    @Transactional
     @Override
     public MenuOrderDto createMenu(MenuOrderDto menuOrderDto) {
         if(menuOrderRepository.existsByName(menuOrderDto.getName())){
