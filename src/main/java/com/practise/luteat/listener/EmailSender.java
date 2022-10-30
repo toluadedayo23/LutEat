@@ -25,7 +25,6 @@ public class EmailSender implements ApplicationListener<UserRegistrationEvent> {
     private final JavaMailSender mailSender;
     private final MailContentBuilder mailContentBuilder;
     private final UserEmailVerificationService userEmailVerificationService;
-    private final UserRepository userRepository;
 
     @Override
     public void onApplicationEvent(UserRegistrationEvent event) {
@@ -57,14 +56,5 @@ public class EmailSender implements ApplicationListener<UserRegistrationEvent> {
         }
     }
 
-    public User resendVerificationLink(ResendVerificationDetailsDto resendVerificationDetailsDto) {
-        if(userRepository.existsByUsername(resendVerificationDetailsDto.getUsername())
-        && userRepository.existsByEmail(resendVerificationDetailsDto.getEmail())){
-            return userRepository.findByEmail(resendVerificationDetailsDto.getEmail())
-                    .orElseThrow(() -> new UsernameEmailExistsException("Username or Email do not exist"));
-        }else{
-            throw new UsernameEmailExistsException("Username or Email do not exist");
-        }
-    }
 
 }
