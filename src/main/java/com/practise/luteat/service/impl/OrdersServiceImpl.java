@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Tuple;
+import java.math.BigInteger;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.Iterator;
@@ -57,31 +58,35 @@ public class OrdersServiceImpl implements OrdersService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User with the username: " + orderBYDateDto.getUsername() + " not found"
                 ));
-        Date startDateRepo = Date.valueOf(orderBYDateDto.getFirstDate());
-        Date finalDateRepo = Date.valueOf(orderBYDateDto.getSecondDate());
-        List<Tuple> tupleList = orderRepository.getOrdersByDateRange(user.getUserId(), startDateRepo, finalDateRepo);
+//        Date startDateRepo = Date.valueOf(orderBYDateDto.getFirstDate());
+//        Date finalDateRepo = Date.valueOf(orderBYDateDto.getSecondDate());
+        List<Tuple> tupleList = orderRepository.getOrdersByDateRange(user.getUserId(), orderBYDateDto.getFirstDate(), orderBYDateDto.getSecondDate());
         List<OrderResponse> orderByDateResponseList = tupleList.stream()
                 .map(tuples -> new OrderResponse(
                         tuples.get(0, String.class),
                         tuples.get(1, Double.class),
-                        tuples.get(2, java.util.Date.class)))
+                        tuples.get(2, java.util.Date.class),
+                        tuples.get(3, BigInteger.class)
+                        )
+                )
                 .collect(Collectors.toList());
         return orderByDateResponseList;
     }
 
     @Override
-    public List<OrderResponse> getRecentOrdersByUsername(String username) {
+    public List<OrderByUsernameResponse> getRecentOrdersByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User with the username: " + username + " not found"
                 ));
         List<Tuple> tupleList = orderRepository.getRecentOrdersByUsername(user.getUserId());
 
-        List<OrderResponse> orderByUsernameResponse = tupleList.stream()
-                .map(tuple -> new OrderResponse(
+        List<OrderByUsernameResponse> orderByUsernameResponse = tupleList.stream()
+                .map(tuple -> new OrderByUsernameResponse(
                         tuple.get(0, String.class),
                         tuple.get(1, Double.class),
-                        tuple.get(2, java.util.Date.class)))
+                        tuple.get(2, java.util.Date.class)
+                ))
                 .collect(Collectors.toList());
 
         return orderByUsernameResponse;

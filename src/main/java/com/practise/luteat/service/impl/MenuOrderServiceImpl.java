@@ -34,7 +34,7 @@ public class MenuOrderServiceImpl implements MenuOrderService {
         MenuOrders menuOrders= menuOrderRepository.findByName(menuOrderDto.getName())
                 .orElseThrow(() -> new MenuOrderException("Menu doesn't exist, please find the right name and try again"));
         menuOrders.setName(menuOrderDto.getName());
-        menuOrders.setPrice(menuOrders.getPrice());
+        menuOrders.setPrice(menuOrderDto.getPrice());
         return menuOrdersMapper.mapMenuToDto(
                 menuOrderRepository.save(menuOrders)
         );
