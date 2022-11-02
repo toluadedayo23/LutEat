@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/menuOrders")
+@RequestMapping("/api/menu-orders")
 public class MenuOrdersController {
 
     private final MenuOrderService menuOrderService;

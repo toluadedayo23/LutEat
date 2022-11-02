@@ -1,9 +1,6 @@
 package com.practise.luteat.controller;
 
-import com.practise.luteat.dto.CreateOrderDto;
-import com.practise.luteat.dto.CreateOrderResponse;
-import com.practise.luteat.dto.OrderBYDateDto;
-import com.practise.luteat.dto.OrderResponse;
+import com.practise.luteat.dto.*;
 import com.practise.luteat.service.OrdersService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +18,7 @@ public class OrdersController {
     private final OrdersService ordersService;
 
     @GetMapping("/get-recent-orders-by/{username}")
-    public ResponseEntity<List<OrderResponse>> getRecentOrdersByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<List<OrderByUsernameResponse>> getRecentOrdersByUsername(@PathVariable("username") String username) {
         return ResponseEntity.status(HttpStatus.OK).body(ordersService.getRecentOrdersByUsername(username));
     }
 
