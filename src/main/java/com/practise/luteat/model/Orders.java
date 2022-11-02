@@ -3,6 +3,7 @@ package com.practise.luteat.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,9 +29,9 @@ public class Orders {
     @Column(name = "created_date")
     private Instant createdDate;
 
-    @NotNull
-    @Size(min = 3)
-    @Column(name = "total_price")
+    //@NotNull
+    //@Range(max = , message = "price cannot be greater than 10000")
+    @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

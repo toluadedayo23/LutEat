@@ -3,6 +3,7 @@ package com.practise.luteat.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -24,8 +25,8 @@ public class MenuOrders {
     @Column(length=1200)
     private String name;
 
-    @NotNull
-    @Size(min = 3)
+    @Column(name = "price", nullable = false)
+    @Range(max = 10000, message = "price cannot be greater than 10000")
     private Double price;
 
 }
