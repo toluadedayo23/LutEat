@@ -10,6 +10,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -49,6 +51,14 @@ public class User {
 
     @Column(name = "created_date")
     private Instant createdDate;
+
+    @Size(min = 1, message = "User must have at least one role")
+    @JoinTable(name = "user_roles",
+               joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"),
+               inverseJoinColumns = @JoinColumn(name ="role_id", referencedColumnName = "roleId")
+    )
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Role> roles = new HashSet<>();
 
     private Boolean enabled;
 }

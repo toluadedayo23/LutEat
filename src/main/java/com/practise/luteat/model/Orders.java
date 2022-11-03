@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
@@ -34,8 +35,9 @@ public class Orders {
     @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 
+    @NotEmpty(message = "Must contain at least one Menu")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Size(min = 1, message = "Must contain at least one Menu")
+    //@Size(min = 1, message = "Must contain at least one Menu")
     @JoinTable(name = "orders_menu_order", joinColumns =
     @JoinColumn(name = "order_id", referencedColumnName = "orderId"),
             inverseJoinColumns =
