@@ -16,3 +16,8 @@ INSERT INTO menu_orders(NAME, PRICE) VALUES('Mvp Box', 4850);
 INSERT INTO menu_orders(NAME, PRICE) VALUES('Ad-star Box', 4400);
 INSERT INTO menu_orders(NAME, PRICE) VALUES('Feast Bucket', 8650);
 INSERT INTO menu_orders(NAME, PRICE) VALUES('Popcorn Chicken-large', 1700);
+
+
+
+insert into roles(names) values("ROLE_USER");
+insert into roles(names) values("ROLE_ADMIN");
