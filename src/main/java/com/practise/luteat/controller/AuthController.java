@@ -1,6 +1,7 @@
 package com.practise.luteat.controller;
 
 import com.practise.luteat.dto.*;
+import com.practise.luteat.model.Role;
 import com.practise.luteat.service.AuthService;
 import com.practise.luteat.service.UserEmailVerificationService;
 import com.practise.luteat.service.impl.RefreshTokenService;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.Collection;
 
 import static org.springframework.http.HttpStatus.OK;
 
