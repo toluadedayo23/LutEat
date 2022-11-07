@@ -1,11 +1,13 @@
 package com.practise.luteat.dto;
 
 import com.practise.luteat.customValidator.Password;
+import com.practise.luteat.model.ERole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -37,5 +39,6 @@ public class signupRequest {
     @Password
     private String password;
 
+    private Set<ERole> roles;
 
 }
