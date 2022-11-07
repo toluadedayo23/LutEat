@@ -107,6 +107,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ErrorResponse(status, e.getMessage());
     }
 
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ErrorResponse handleRoleNotFoundException(Exception e){
+        RoleNotFoundException roleNotFoundException = (RoleNotFoundException) e;
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        log.error("Role not found exception ");
+        return new ErrorResponse(status, e.getMessage());
+    }
+    @ExceptionHandler(OrderException.class)
+    public ErrorResponse handleOrderException(Exception e){
+        OrderException orderException = (OrderException) e;
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        log.error("Order Exception!");
+
+        return new ErrorResponse(status, e.getMessage());
+
+    }
 
     @ExceptionHandler(Exception.class)
     public ErrorResponse handleException(Exception e) {
