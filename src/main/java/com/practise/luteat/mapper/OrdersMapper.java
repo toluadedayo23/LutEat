@@ -16,9 +16,6 @@ public abstract class OrdersMapper {
     private UserRepository userRepository;
 
 
-    @Mapping(target = "username", expression = "java(order.getUser().getUsername())")
-    @Mapping(target = "menuList", source = "orders")
-    public abstract CreateOrderDto mapOrdersToDto(Orders order);
 
     @Mapping(target = "orderId", ignore = true)
     @Mapping(target = "user", expression = "java(findUser(orderDto.getUsername()))")
