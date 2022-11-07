@@ -53,9 +53,10 @@ public class User {
     private Instant createdDate;
 
     @Size(min = 1, message = "User must have at least one role")
-    @JoinTable(name = "user_roles",
-               joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"),
-               inverseJoinColumns = @JoinColumn(name ="role_id", referencedColumnName = "roleId")
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"),
+            inverseJoinColumns = @JoinColumn(name ="role_id", referencedColumnName = "roleId")
     )
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Role> roles = new HashSet<>();

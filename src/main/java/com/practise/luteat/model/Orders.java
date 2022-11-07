@@ -30,17 +30,16 @@ public class Orders {
     @Column(name = "created_date")
     private Instant createdDate;
 
-    //@NotNull
-    //@Range(max = , message = "price cannot be greater than 10000")
+
     @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 
     @NotEmpty(message = "Must contain at least one Menu")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    //@Size(min = 1, message = "Must contain at least one Menu")
-    @JoinTable(name = "orders_menu_order", joinColumns =
-    @JoinColumn(name = "order_id", referencedColumnName = "orderId"),
-            inverseJoinColumns =
-            @JoinColumn(name = "menu_order_id", referencedColumnName = "menuOrderId"))
+    @JoinTable(
+            name = "orders_menu_order",
+            joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "orderId"),
+            inverseJoinColumns = @JoinColumn(name = "menu_order_id", referencedColumnName = "menuOrderId")
+    )
     private List<MenuOrders> orders;
 }
