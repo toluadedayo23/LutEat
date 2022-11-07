@@ -5,12 +5,14 @@ import com.practise.luteat.dto.LoginRequest;
 import com.practise.luteat.dto.RefreshTokenRequest;
 import com.practise.luteat.dto.signupRequest;
 import com.practise.luteat.event.UserRegistrationEvent;
+import com.practise.luteat.exceptions.RoleNotFoundException;
 import com.practise.luteat.exceptions.UsernameEmailExistsException;
-import com.practise.luteat.listener.EmailSender;
+import com.practise.luteat.model.ERole;
+import com.practise.luteat.model.Role;
 import com.practise.luteat.model.User;
-import com.practise.luteat.repository.UserEmailVerificationRepository;
+import com.practise.luteat.repository.RoleRepository;
 import com.practise.luteat.repository.UserRepository;
-import com.practise.luteat.security.JwtProvider;
+import com.practise.luteat.security.JwtUtils;
 import com.practise.luteat.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,17 +28,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtProvider jwtProvider;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final JwtUtils jwtUtils;
+
 
     @Override
     @Transactional
@@ -58,6 +65,39 @@ public class AuthServiceImpl implements AuthService {
         userObject.setCreatedDate(Instant.now());
         userObject.setEnabled(false);
 
+        Set<ERole> strRoles = signupRequest.getRoles();
+        Set<Role> roles = new HashSet<>();
+
+        if (strRoles == null) {
+            Role userRole = roleRepository.findByNames(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RoleNotFoundException(
+                            "Error: Role is not found for the user: " + signupRequest.getUsername()));
+            roles.add(userRole);
+        } else {
+            strRoles.forEach(role -> {
+                        switch (role) {
+
+                            case ROLE_ADMIN:
+                                Role adminRole = roleRepository.findByNames(ERole.ROLE_ADMIN)
+                                        .orElseThrow(() -> new RoleNotFoundException(
+                                                "Error: Role is not found for the user: " + signupRequest.getUsername()));
+                                roles.add(adminRole);
+                                break;
+
+                            default:
+                                Role userRole = roleRepository.findByNames(ERole.ROLE_USER)
+                                        .orElseThrow(() -> new RoleNotFoundException(
+                                                "Error: Role is not found for the user: " + signupRequest.getUsername()));
+                                roles.add(userRole);
+                                break;
+                        }
+                    }
+
+            );
+        }
+        userObject.setRoles(roles);
+
+
         applicationEventPublisher.publishEvent(new UserRegistrationEvent(userObject));
         userRepository.save(userObject);
     }
@@ -70,11 +110,11 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtProvider.generateToken(authentication);
+        String token = jwtUtils.generateJwtToken(authentication);
         return AuthenticationResponse.builder()
                 .authenticationToken(token)
                 .refreshToken(refreshTokenService.generateRefreshToken().getToken())
-                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .expiresAt(Instant.now().plusMillis(jwtUtils.getJwtExpirationInMillis()))
                 .username(loginRequest.getUsername())
                 .build();
     }
@@ -84,11 +124,11 @@ public class AuthServiceImpl implements AuthService {
     public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         refreshTokenService.validateRefreshToken(refreshTokenRequest);
         refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
-        String token = jwtProvider.generateTokenWithUsername(refreshTokenRequest.getUsername());
+        String token = jwtUtils.generateTokenWithUsername(refreshTokenRequest.getUsername());
         return AuthenticationResponse.builder()
                 .authenticationToken(token)
                 .refreshToken(refreshTokenService.generateRefreshToken().getToken())
-                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .expiresAt(Instant.now().plusMillis(jwtUtils.getJwtExpirationInMillis()))
                 .username(refreshTokenRequest.getUsername())
                 .build();
     }
