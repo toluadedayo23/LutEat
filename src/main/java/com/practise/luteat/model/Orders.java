@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -28,7 +29,8 @@ public class Orders {
     private User user;
 
     @Column(name = "created_date")
-    private Instant createdDate;
+    @Temporal(TemporalType.DATE)
+    private Date createdDate;
 
 
     @Column(name = "total_price", nullable = false)
