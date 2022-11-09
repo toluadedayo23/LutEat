@@ -38,10 +38,6 @@ public abstract class OrdersMapper {
     Double getTotalOrderPrice(CreateOrderDto orderDto) {
         if (orderDto != null) {
             Double totalPrice = 0.0;
-//            Iterator<MenuOrders> order = orders.getOrders().iterator();
-//            while (order.hasNext()) {
-//                totalPrice += order.next().getPrice();
-//            }
             for (MenuOrderDto order : orderDto.getMenuList()) {
                 if (order.getPrice() == null) {
                     throw new OrderException("order was empty, please re-order again");
