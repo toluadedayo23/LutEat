@@ -19,7 +19,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
             "Join orders as O\n" +
             "on O.order_id = OMO.order_id\n" +
             "where O.user_id = :userId\n" +
-            "and date(O.created_date) between :firstDate and :secondDate\n" +
+            "and (O.created_date) between :firstDate and :secondDate\n" +
             "group by MO.name, O.created_date\n" +
             "order by O.created_date desc\n" +
             "limit 20 ", nativeQuery = true)
