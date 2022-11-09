@@ -30,7 +30,7 @@ public class OrdersController {
 
 
     @PostMapping("/get-order-by-date")
-    public ResponseEntity<List<OrderResponse>> getOrderByDate(@Valid @RequestBody OrderBYDateDto orderBYDateDto) {
+    public ResponseEntity<List<OrderResponse>> getOrderByDateRange(@Valid @RequestBody OrderBYDateDto orderBYDateDto) {
         return ResponseEntity.status(HttpStatus.OK).body(ordersService.getOrderByDate(orderBYDateDto));
     }
 
