@@ -1,7 +1,6 @@
 package com.practise.luteat.service.impl;
 
 import com.practise.luteat.dto.*;
-import com.practise.luteat.exceptions.OrderException;
 import com.practise.luteat.mapper.MenuOrdersMapper;
 import com.practise.luteat.mapper.OrdersMapper;
 import com.practise.luteat.model.MenuOrders;
@@ -9,7 +8,6 @@ import com.practise.luteat.model.Orders;
 import com.practise.luteat.model.User;
 import com.practise.luteat.repository.OrderRepository;
 import com.practise.luteat.repository.UserRepository;
-import com.practise.luteat.service.AuthService;
 import com.practise.luteat.service.OrdersService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Tuple;
 import java.math.BigInteger;
-import java.sql.Date;
-import java.time.Instant;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +28,6 @@ public class OrdersServiceImpl implements OrdersService {
     private final OrdersMapper ordersMapper;
     private final OrderRepository orderRepository;
     private final MenuOrdersMapper menuOrdersMapper;
-    private final AuthService authService;
 
     @Transactional
     @Override
@@ -43,13 +38,11 @@ public class OrdersServiceImpl implements OrdersService {
                 );
 
         Orders orders = ordersMapper.map(orderDto);
-        Double totalPrice = getTotalOrderPrice(orders);
-        orders.setTotalPrice(totalPrice);
         orderRepository.save(orders);
         return CreateOrderResponse.builder()
                 .username(orders.getUser().getUsername())
                 .totalPrice(orders.getTotalPrice())
-                .orderDate(Instant.now())
+                .orderDate(new Date())
                 .order(menuOrderDtoList(orders.getOrders()))
                 .build();
 
@@ -61,15 +54,13 @@ public class OrdersServiceImpl implements OrdersService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User with the username: " + orderBYDateDto.getUsername() + " not found"
                 ));
-//        Date startDateRepo = Date.valueOf(orderBYDateDto.getFirstDate());
-//        Date finalDateRepo = Date.valueOf(orderBYDateDto.getSecondDate());
         List<Tuple> tupleList = orderRepository.getOrdersByDateRange(user.getUserId(), orderBYDateDto.getFirstDate(), orderBYDateDto.getSecondDate());
         List<OrderResponse> orderByDateResponseList = tupleList.stream()
                 .map(tuples -> new OrderResponse(
-                        tuples.get(0, String.class),
-                        tuples.get(1, Double.class),
-                        tuples.get(2, java.util.Date.class),
-                        tuples.get(3, BigInteger.class)
+                                tuples.get(0, String.class),
+                                tuples.get(1, Double.class),
+                                tuples.get(2, java.util.Date.class),
+                                tuples.get(3, BigInteger.class)
                         )
                 )
                 .collect(Collectors.toList());
@@ -78,9 +69,6 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public List<OrderByUsernameResponse> getRecentOrdersByUsername(String username) {
-        if(!authService.isLoggedIn()){
-            throw new UsernameNotFoundException("User not logged in, please do that to proceed");
-        }
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User with the username: " + username + " not found"
@@ -96,25 +84,6 @@ public class OrdersServiceImpl implements OrdersService {
                 .collect(Collectors.toList());
 
         return orderByUsernameResponse;
-    }
-
-
-    private Double getTotalOrderPrice(Orders orders) {
-        if(orders != null){
-            Double totalPrice = 0.0;
-//            Iterator<MenuOrders> order = orders.getOrders().iterator();
-//            while (order.hasNext()) {
-//                totalPrice += order.next().getPrice();
-//            }
-            for(MenuOrders order : orders.getOrders()){
-                if(order.getPrice() == null){
-                    throw new OrderException("order was empty, please re-order again");
-                }
-                totalPrice += order.getPrice();
-            }
-            return totalPrice;
-        }
-        throw new OrderException("Order is null, please re-order again");
     }
 
     private List<MenuOrderDto> menuOrderDtoList(List<MenuOrders> orders) {

@@ -8,9 +8,9 @@ public interface MenuOrderService {
 
     List<MenuOrderDto> getAllMenu();
 
-    MenuOrderDto updateMenu(MenuOrderDto menuOrderDto);
+    MenuOrderDto updateMenuPrice(MenuOrderDto menuOrderDto);
 
-    void deleteMenu(MenuOrderDto menuOrderDto);
+    void deleteMenu(String name);
 
     MenuOrderDto createMenu(MenuOrderDto menuOrderDto);
 

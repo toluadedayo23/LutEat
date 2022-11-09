@@ -10,7 +10,6 @@ public interface AuthService {
      void singUp(signupRequest registerRequest);
      AuthenticationResponse login(LoginRequest loginRequest);
      AuthenticationResponse refreshToken(RefreshTokenRequest refreshToken);
-     User getCurrentUser();
      boolean isLoggedIn();
 
 }
