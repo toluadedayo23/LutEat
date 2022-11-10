@@ -14,5 +14,6 @@ public interface MenuOrdersMapper {
     MenuOrderDto mapMenuToDto(MenuOrders menuOrders);
 
     @InheritInverseConfiguration
+    @Mapping(target = "menuOrderId", ignore = true)
     MenuOrders map(MenuOrderDto menuOrderDto);
 }
